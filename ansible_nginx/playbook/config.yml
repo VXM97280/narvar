@@ -1,0 +1,19 @@
+---
+- name: docker config
+  hosts: docker
+  become: true
+  gather_facts: false
+  pre_tasks:
+    # Required bootstrapping for Ubuntu 16.04.
+    - name: "BOOTSTRAPPING HOST: Ensuring python-minimal and aptitude are installed."
+      raw: sudo bash -c "test -e /usr/bin/python || (apt -qqy update && apt install -qy python-minimal aptitude)"
+    - name: "BOOTSTRAPPING HOST: Ensuring python-lxml is installed (for maven artifact install)"
+      apt: name=python-lxml state=present
+    - setup:
+  roles:
+    - docker_role
+    - nginx_docker
+    # - psm-inf.ansible-role-base
+    # - psm-inf.ansible-role-high-performance
+    # - psm-inf.ansible-role-sudo
+    

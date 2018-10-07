@@ -1,0 +1,41 @@
+- name: Install pip
+  apt: 
+    name: python-pip 
+    state: present
+
+- name: install docker-py package
+  pip: 
+    name: docker-py
+
+- name: Install nginx Docker
+  docker_image:
+    name: nginx
+    tag: "{{ nginx_version }}"
+
+- name: Check if Nginx conatiner exist
+  docker_container:
+    name: nginx
+    image: nginx
+    state: present
+
+- name: Restart nginx container
+  docker_container:
+    name: nginx
+    image: nginx
+    state: started
+    restart: "true"
+
+# - name: Remove Nginx container
+#   docker_container:
+#     name: my-nginx3
+#     state: absent
+- name: Check if container is running
+  shell: docker ps
+
+# - name: run the site in a docker container
+#   docker_container:
+#     name: narvar-nginx
+#     image: "nginx"
+#     state: reloaded
+#     publish_all_ports: "80"
+#     use_tls: encrypt

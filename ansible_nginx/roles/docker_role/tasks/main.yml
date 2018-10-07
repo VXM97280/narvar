@@ -1,0 +1,51 @@
+---
+- name: Add Docker's GPG key
+  apt_key:
+    id: "{{ docker_apt_key_id }}"
+    url: "{{ docker_apt_key_server }}"
+
+- name: Configure upstream APT repository
+  apt_repository:
+    repo: "{{ docker_apt_repository }}"
+
+- name: Remove Docker
+  apt:
+    name: "docker-{{ docker_edition }}"
+    state: "absent"
+  when: docker_remove_package
+
+- name: Install Docker
+  apt:
+    name: "docker-{{ docker_edition }}"
+    update_cache: True
+    cache_valid_time: "{{ docker_apt_cache_time }}"
+    state: "latest"
+  when: not docker_remove_package
+
+- name: Create "docker" group
+  group:
+    name: "docker"
+    state: present
+  tags:
+    - docker
+
+- name: Add remote "ubuntu" user to "docker" group
+  user:
+    name: "ubuntu"
+    group: "docker"
+    append: yes
+  tags:
+    - docker
+
+- name: Remove Upstart config file
+  file:
+    path: "/etc/default/docker"
+    state: "absent"
+
+- name: Ensure systemd directory exists
+  file:
+    path: "/etc/systemd/system"
+    state: "directory"
+    owner: "root"
+    group: "root"
+    mode: "0755"
