@@ -20,21 +20,21 @@ resource "aws_vpc" "narvar_vpc" {
 # ------------------------------
 # public subnets
 # ------------------------------
-# resource "aws_subnet" "public_az1" {
-#   vpc_id            = "${aws_vpc.narvar_vpc.id}"
-#   cidr_block        = "${var.public_subnet_cidr_az1}"
-#   availability_zone = "us-west-1a"
+resource "aws_subnet" "public_az1" {
+  vpc_id            = "${aws_vpc.narvar_vpc.id}"
+  cidr_block        = "${var.public_subnet_cidr_az1}"
+  availability_zone = "us-east-1a"
 
-#   tags {
-#     Name        = "${var.tag_environment}-${var.tag_name}-public-us-east-1a"
-#     Developer   = "${var.tag_developer}"
-#   }
-# }
+  tags {
+    Name        = "${var.tag_environment}-${var.tag_name}-public-us-east-1a"
+    Developer   = "${var.tag_developer}"
+  }
+}
 
 resource "aws_subnet" "public_az2" {
   vpc_id            = "${aws_vpc.narvar_vpc.id}"
   cidr_block        = "${var.public_subnet_cidr_az2}"
-  availability_zone = "us-west-1b"
+  availability_zone = "us-east-1b"
   map_public_ip_on_launch = "true"
 
   tags {
@@ -46,7 +46,7 @@ resource "aws_subnet" "public_az2" {
 resource "aws_subnet" "public_az3" {
   vpc_id            = "${aws_vpc.narvar_vpc.id}"
   cidr_block        = "${var.public_subnet_cidr_az3}"
-  availability_zone = "us-west-1c"
+  availability_zone = "us-east-1c"
   map_public_ip_on_launch = "true"
 
   tags {
@@ -54,24 +54,24 @@ resource "aws_subnet" "public_az3" {
     Developer   = "${var.tag_developer}"
   }
 }
-# # ------------------------------
-# # private subnets
-# # ------------------------------
-# resource "aws_subnet" "private_az1" {
-#   vpc_id            = "${aws_vpc.narvar_vpc.id}"
-#   cidr_block        = "${var.private_subnet_cidr_az1}"
-#   availability_zone = "us-west-1a"
+# ------------------------------
+# private subnets
+# ------------------------------
+resource "aws_subnet" "private_az1" {
+  vpc_id            = "${aws_vpc.narvar_vpc.id}"
+  cidr_block        = "${var.private_subnet_cidr_az1}"
+  availability_zone = "us-east-1a"
 
-#   tags {
-#     Name        = "${var.tag_environment}-${var.tag_name}-private-us-east-1a"
-#     Developer   = "${var.tag_developer}"
-#   }
-# }
+  tags {
+    Name        = "${var.tag_environment}-${var.tag_name}-private-us-east-1a"
+    Developer   = "${var.tag_developer}"
+  }
+}
 
 resource "aws_subnet" "private_az2" {
   vpc_id            = "${aws_vpc.narvar_vpc.id}"
   cidr_block        = "${var.private_subnet_cidr_az2}"
-  availability_zone = "us-west-1b"
+  availability_zone = "us-east-1b"
 
   tags {
     Name        = "${var.tag_environment}-${var.tag_name}-private-us-east-1b"
@@ -82,7 +82,7 @@ resource "aws_subnet" "private_az2" {
 resource "aws_subnet" "private_az3" {
   vpc_id            = "${aws_vpc.narvar_vpc.id}"
   cidr_block        = "${var.private_subnet_cidr_az3}"
-  availability_zone = "us-west-1c"
+  availability_zone = "us-east-1c"
 
   tags {
     Name        = "${var.tag_environment}-${var.tag_name}-private-us-east-1c"
@@ -157,14 +157,14 @@ resource "aws_route" "private_route" {
 	destination_cidr_block = "0.0.0.0/0"
 	nat_gateway_id = "${aws_nat_gateway.vpc_nat_gw.id}"
 }
-# # ------------------------------
-# # route table association
-# # ------------------------------
-# # associating public subnets to route table :
-# resource "aws_route_table_association" "public_subnet_az1" {
-#   subnet_id = "${aws_subnet.public_az1.id}"
-#   route_table_id = "${aws_route_table.public_route_table.id}"
-# }
+# ------------------------------
+# route table association
+# ------------------------------
+# associating public subnets to route table :
+resource "aws_route_table_association" "public_subnet_az1" {
+  subnet_id = "${aws_subnet.public_az1.id}"
+  route_table_id = "${aws_route_table.public_route_table.id}"
+}
 
 resource "aws_route_table_association" "public_subnet_az2" {
   subnet_id = "${aws_subnet.public_az2.id}"
@@ -176,11 +176,11 @@ resource "aws_route_table_association" "public_subnet_az3" {
   route_table_id = "${aws_route_table.public_route_table.id}"
 }
 
-# # # associating private subnets to route table :
-# # resource "aws_route_table_association" "private_subnet_az1" {
-# #   subnet_id = "${aws_subnet.private_az1.id}"
-# #   route_table_id = "${aws_route_table.private_route_table.id}"
-# # }
+# associating private subnets to route table :
+resource "aws_route_table_association" "private_subnet_az1" {
+  subnet_id = "${aws_subnet.private_az1.id}"
+  route_table_id = "${aws_route_table.private_route_table.id}"
+}
 
 resource "aws_route_table_association" "private_subnet_az2" {
   subnet_id = "${aws_subnet.private_az2.id}"

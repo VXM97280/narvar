@@ -1,5 +1,5 @@
-# # ------------------------------------
-# # test-narvar IAM Role
+# ------------------------------------
+# test-narvar IAM Role
 # # ------------------------------------
 # resource "aws_iam_instance_profile" "test_narvar_profile" {
 #   name = "${var.tag_environment}-${var.tag_name}"
@@ -19,13 +19,13 @@
 # ------------------------------------
 # test-narvar-ec2 launch configuration
 # # -------------------------------------
-resource "aws_launch_configuration" "test_narvar_ec2_lc" {
-  name                 = "${var.tag_environment}-${var.tag_name}-ec2-lc"
+resource "aws_launch_configuration" "test_narvar_ec2_lcf" {
+  name                 = "${var.tag_environment}-${var.tag_name}-ec2-20181006"
   image_id             = "${var.ubuntu_ami_id}"
   instance_type        = "${var.ec2_instance_type}"
   //iam_instance_profile = "${aws_iam_instance_profile.test_narvar_profile.name}"
   user_data            = "{\"autoScalingGroup\": \"${var.tag_environment}-${var.tag_name}\"}"
-  key_name             = "test-narvar-vmalladi"
+  key_name             = "devopslook"
 
   root_block_device = [
     {
@@ -36,33 +36,13 @@ resource "aws_launch_configuration" "test_narvar_ec2_lc" {
 
   security_groups = [
     "${aws_security_group.test_narvar_default_sg.id}", 
-    "${aws_security_group.test_narvar_asg_sg.id}", 
+    "${aws_security_group.test_narvar_asg_sg.id}",
   ]
 }
 
-resource "aws_launch_configuration" "test_narvar_ec2_lcf" {
-  name                 = "${var.tag_environment}-${var.tag_name}-ec2-20181006"
-  image_id             = "${var.ubuntu_ami_id}"
-  instance_type        = "${var.ec2_instance_type}"
-  //iam_instance_profile = "${aws_iam_instance_profile.test_narvar_profile.name}"
-  user_data            = "{\"autoScalingGroup\": \"${var.tag_environment}-${var.tag_name}\"}"
-  key_name             = "test-narvar-vmalladi"
-
-  root_block_device = [
-    {
-      volume_size = "8"
-      volume_type = "gp2"
-    },
-  ]
-
-  security_groups = [
-    "${aws_security_group.test_narvar_default_sg.id}",
-  ]
-}
-
-# # ------------------------------------
-# # test-narvar-asg auto scalling group
-# # -------------------------------------
+# ------------------------------------
+# test-narvar-asg auto scalling group
+# -------------------------------------
 resource "aws_autoscaling_group" "test_narvar_asg" {
   name                = "${var.tag_environment}-${var.tag_name}-asg"
   vpc_zone_identifier = ["${aws_subnet.private_az2.id}","${aws_subnet.private_az3.id}"]
@@ -101,7 +81,7 @@ resource "aws_elb" "test_narvar_elb" {
   security_groups = ["${aws_security_group.test_narvar_elb_sg.id}"]
 
   listener {
-    instance_port     = 8000
+    instance_port     = 80
     instance_protocol = "http"
     lb_port           = 80
     lb_protocol       = "http"
@@ -119,7 +99,7 @@ resource "aws_elb" "test_narvar_elb" {
     healthy_threshold   = 2
     unhealthy_threshold = 2
     timeout             = 3
-    target              = "HTTP:8000/"
+    target              = "HTTP:80/"
     interval            = 30
   }
 
@@ -135,13 +115,13 @@ resource "aws_elb" "test_narvar_elb" {
 }
 # ------------------------------------
 # test-narvar-nat nat instance
-# # -------------------------------------
+# -------------------------------------
 resource "aws_instance" "nat_instance" {
   ami           = "${var.nat_ubuntu_ami_id}"
   instance_type = "t1.micro"
   subnet_id = "${aws_subnet.public_az2.id}"
   source_dest_check = "false"
-  key_name             = "test-narvar-vmalladi"
+  key_name             = "devopslook"
   root_block_device = [
     {
       volume_size = "8"
