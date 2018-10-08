@@ -193,3 +193,11 @@ Commercial support is available at
 </body>
 </html>
 ```
+5. To find the `monitor_script` and `cpu_monitor`
+navigate to 
+`sudo su -`
+`cd /bin`
+
+6. TO check the crone tab 
+`cd /bin`
+`crontab -e`
